@@ -1,52 +1,58 @@
 import SwiftUI
-import MapKit
 
 struct PlaceDetailView: View {
     let place: Place
     
     var body: some View {
         ScrollView {
-            AsyncImage(url: place.imageURL) { image in
-                image.resizable().scaledToFit()
-            } placeholder: {
-                ProgressView()
-            }
-            .frame(height: 250)
-            
-            VStack(alignment: .leading, spacing: 10) {
-                Text(place.name)
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
+            VStack(alignment: .leading) {
+                AsyncImage(url: place.imageURL) { phase in
+                    if let image = phase.image {
+                        image.resizable().scaledToFit()
+                    } else {
+                        ProgressView()
+                    }
+                }
+                .frame(height: 250)
+                .clipShape(RoundedRectangle(cornerRadius: 15))
+                .padding()
                 
-                Text(place.country)
-                    .font(.title3)
-                    .foregroundColor(.secondary)
-
+                Text(place.name)
+                    .font(.title)
+                    .bold()
+                    .padding(.horizontal)
+                
+                Text(place.category.localizedName)
+                    .font(.subheadline)
+                    .foregroundColor(.gray)
+                    .padding(.horizontal)
+                
+                Divider()
+                
                 Text(place.description)
                     .font(.body)
-                    .padding(.vertical)
+                    .padding(.horizontal)
                 
-                Button(action: {
-                    openInMaps(coordinate: place.coordinate)
-                }) {
-                    Text("Get Directions")
-                        .font(.headline)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(10)
+                if let sourceURL = place.sourceURL {
+                    Button(action: {
+                        openURL(sourceURL)
+                    }) {
+                        Text("Read More")
+                            .font(.headline)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.blue)
+                            .foregroundColor(.white)
+                            .cornerRadius(10)
+                    }
+                    .padding(.horizontal)
                 }
             }
-            .padding()
         }
         .navigationTitle(place.name)
-        .navigationBarTitleDisplayMode(.inline)
     }
     
-    private func openInMaps(coordinate: CLLocationCoordinate2D) {
-        let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate))
-        mapItem.name = place.name
-        mapItem.openInMaps()
+    private func openURL(_ url: URL) {
+        UIApplication.shared.open(url)
     }
 }
