@@ -1,0 +1,6 @@
+framework module Pods_Holy_placesUITests {
+  umbrella header "Pods-Holy placesUITests-umbrella.h"
+
+  export *
+  module * { export * }
+}

@@ -1,0 +1,6 @@
+framework module Pods_Holy_places {
+  umbrella header "Pods-Holy places-umbrella.h"
+
+  export *
+  module * { export * }
+}
