@@ -1,0 +1,6 @@
+@HelloAppRunnerVpc_HostAddress = http://localhost:5065
+
+GET {{HelloAppRunnerVpc_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -6,170 +6,65 @@
 //
 
 import SwiftUI
-import MapKit
 
 struct ExploreView: View {
-    @State private var searchText = ""
-    @State private var selectedTab = "stays"
-    @State private var selectedPlace: Place? = nil
-    @State private var showPreview = false
-    @State private var showListView = false
-    @State private var showFilterSheet = false
-    
-    @State private var selectedCategories: Set<HolyPlaceCategory> = []
-    @State private var selectedCountry: String? = nil
+    @AppStorage("searchText") private var searchText = "" // ✅ Save search term
     @State private var selectedCity: String? = nil
-    @State private var sortAscending = true // ✅ Sort by distance
-    
-    @StateObject private var locationManager = LocationManager.shared
+    @State private var selectedCategory: HolyPlaceCategory? = nil
+
     @StateObject private var viewModel = PlacesViewModel.shared
-    
-    var nearestPlaces: [Place] {
-        guard let userLocation = locationManager.userLocation else { return [] }
-        
-        var filteredPlaces = viewModel.places
-        
-        // ✅ Apply category filter
-        if !selectedCategories.isEmpty {
-            filteredPlaces = filteredPlaces.filter { selectedCategories.contains($0.category) }
+
+    var filteredPlaces: [Place] {
+        viewModel.places.filter { place in
+            (searchText.isEmpty || place.name.localizedCaseInsensitiveContains(searchText)) &&
+            (selectedCity == nil || place.city == selectedCity) &&
+            (selectedCategory == nil || place.category == selectedCategory)
         }
-        
-        // ✅ Apply country filter
-        if let country = selectedCountry {
-            filteredPlaces = filteredPlaces.filter { $0.country == country }
-        }
-        
-        // ✅ Apply city filter
-        if let city = selectedCity {
-            filteredPlaces = filteredPlaces.filter { $0.city == city }
-        }
-        
-        // ✅ Sort by proximity
-        filteredPlaces.sort {
-            let distance1 = calculateDistance(from: userLocation.coordinate, to: $0.coordinate)
-            let distance2 = calculateDistance(from: userLocation.coordinate, to: $1.coordinate)
-            return sortAscending ? distance1 < distance2 : distance1 > distance2
-        }
-        
-        return Array(filteredPlaces.prefix(10))
     }
-    
+
     var body: some View {
         NavigationView {
-            VStack(spacing: -10) {
-                // ✅ Top Tab Selection
-                HStack {
-                    TabButton(title: "Stays", selectedTab: $selectedTab, tabName: "stays")
-                    TabButton(title: "Near", selectedTab: $selectedTab, tabName: "near")
-                }
-                .padding(.top, 10)
-                .background(Color.white)
-                .zIndex(2)
-                
-                if selectedTab == "stays" {
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("Where would you like to travel?")
-                            .font(.title.bold())
-                            .padding(.horizontal)
-                        
-                        SearchBar(text: $searchText)
-                            .padding(.horizontal)
-                    }
-                    .padding(.top)
-                    
-                    ScrollView {
-                        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 15) {
-                            ForEach(viewModel.places.filter { searchText.isEmpty || $0.name.localizedCaseInsensitiveContains(searchText) }) { place in
-                                NavigationLink(destination: PlaceDetailView(place: place)) {
-                                    PlaceCard(place: place)
-                                }
+            VStack(spacing: 0) {
+                // ✅ **Search Bar & Filters**
+                VStack(spacing: 8) {
+                    SearchBar(text: $searchText)
+                        .padding(.horizontal)
+
+                    // 🔹 **Filter Buttons**
+                    HStack(spacing: 10) {
+                        // **City Filter**
+                        Menu {
+                            Button("All cities", action: { selectedCity = nil })
+                            Divider()
+                            ForEach(Set(viewModel.places.compactMap { $0.city }).sorted(), id: \.self) { city in
+                                Button(city) { selectedCity = city }
                             }
+                        } label: {
+                            FilterButton(title: selectedCity ?? "All cities")
                         }
-                        .padding()
-                    }
-                } else {
-                    ZStack {
-                        Map(
-                            coordinateRegion: .constant(MKCoordinateRegion(
-                                center: locationManager.userLocation?.coordinate ?? CLLocationCoordinate2D(latitude: 41.9028, longitude: 12.4964),
-                                span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
-                            )),
-                            annotationItems: nearestPlaces
-                        ) { place in
-                            MapAnnotation(coordinate: place.coordinate) {
-                                Button(action: {
-                                    selectedPlace = place
-                                    showPreview = true
-                                }) {
-                                    VStack {
-                                        Image(systemName: "mappin.circle.fill")
-                                            .foregroundColor(.red)
-                                            .font(.title)
-                                        
-                                        Text(place.name)
-                                            .font(.caption)
-                                            .bold()
-                                            .padding(5)
-                                            .background(Color.white)
-                                            .cornerRadius(5)
-                                        
-                                        if let userLocation = locationManager.userLocation {
-                                            let distance = calculateDistance(from: userLocation.coordinate, to: place.coordinate)
-                                            Text("\(String(format: "%.1f km away", distance))")
-                                                .font(.caption2)
-                                                .foregroundColor(.black)
-                                                .bold()
-                                                .padding(3)
-                                                .background(Color.white.opacity(0.8))
-                                                .cornerRadius(3)
-                                        }
-                                    }
-                                }
+
+                        // **Category Filter**
+                        Menu {
+                            Button("All types", action: { selectedCategory = nil })
+                            Divider()
+                            ForEach(HolyPlaceCategory.allCases, id: \.self) { category in
+                                Button(category.localizedName) { selectedCategory = category }
                             }
-                        }
-                        .frame(height: 450)
-                        
-                        if let place = selectedPlace {
-                            PlacePreviewCard(place: place, isPresented: $showPreview, onViewDetails: {
-                                showPreview = false
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                    selectedPlace = place // ✅ Ensure place is selected
-                                }
-                            })
-                            .zIndex(3)
-                            .transition(.move(edge: .bottom))
-                            .animation(.easeInOut)
-                            
-                            Color.black.opacity(0.001)
-                                .onTapGesture {
-                                    showPreview = false
-                                    selectedPlace = nil
-                                }
-                        }
-                        
-                        VStack {
-                            Spacer()
-                            Button(action: { showListView = true }) {
-                                Text("Show List View")
-                                    .font(.headline)
-                                    .frame(maxWidth: .infinity)
-                                    .padding()
-                                    .background(Color.blue)
-                                    .foregroundColor(.white)
-                                    .cornerRadius(10)
-                                    .padding(.horizontal)
-                            }
-                            .padding(.bottom, 10)
+                        } label: {
+                            FilterButton(title: selectedCategory?.localizedName ?? "All types")
                         }
                     }
                 }
-            }
-            // ✅ **Attach the `.sheet(item:)` to `NavigationView`**
-            .sheet(item: $selectedPlace) { place in
-                PlaceDetailView(place: place)
-            }
-            .sheet(isPresented: $showFilterSheet) {
-                FilterSheet(selectedCategories: $selectedCategories, selectedCountry: $selectedCountry, selectedCity: $selectedCity)
+                .padding()
+                .background(Color.white.shadow(radius: 3))
+
+                // ✅ **List View**
+                List(filteredPlaces) { place in
+                    NavigationLink(destination: PlaceDetailView(place: place)) {
+                        ExplorePlaceRow(place: place)
+                    }
+                }
+                .listStyle(.plain)
             }
         }
     }
@@ -254,5 +149,52 @@ struct PlaceCard: View {
         .background(Color.white)
         .clipShape(RoundedRectangle(cornerRadius: 15))
         .shadow(radius: 5)
+    }
+}
+struct ExplorePlaceRow: View {
+    let place: Place
+
+    var body: some View {
+        HStack {
+            AsyncImage(url: place.imageURL) { phase in
+                if let image = phase.image {
+                    image.resizable().scaledToFill()
+                } else {
+                    Image(systemName: "photo") // ✅ Show placeholder if image fails
+                        .resizable()
+                        .scaledToFit()
+                        .foregroundColor(.gray)
+                }
+            }
+            .frame(width: 80, height: 80)
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+
+            VStack(alignment: .leading) {
+                Text(place.name)
+                    .font(.headline)
+                    .foregroundColor(.blue)
+                Text("\(place.city ?? "Unknown City"), \(place.country ?? "Unknown Country")")
+                    .font(.subheadline)
+                    .foregroundColor(.gray)
+            }
+            Spacer()
+        }
+        .padding()
+    }
+}
+
+struct FilterButton: View {
+    let title: String
+
+    var body: some View {
+        HStack {
+            Text(title)
+            Image(systemName: "chevron.down")
+        }
+        .font(.callout)
+        .padding(.vertical, 8)
+        .padding(.horizontal, 12)
+        .background(Color(.systemGray5))
+        .cornerRadius(10)
     }
 }

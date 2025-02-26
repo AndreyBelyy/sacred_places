@@ -19,24 +19,32 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     }
     
     func requestPermissions() {
-        let status = CLLocationManager.authorizationStatus()
-        
-        DispatchQueue.main.async {
-            if status == .notDetermined {
-                self.locationManager.requestWhenInUseAuthorization()
-            } else if status == .authorizedWhenInUse || status == .authorizedAlways {
-                self.startUpdatingLocation()
-            } else {
-                print("⚠️ Location permission denied. Please enable it in settings.")
+        DispatchQueue.global(qos: .background).async {
+            let status = CLLocationManager.authorizationStatus()
+            
+            DispatchQueue.main.async {
+                if status == .notDetermined {
+                    self.locationManager.requestWhenInUseAuthorization()
+                } else if status == .authorizedWhenInUse || status == .authorizedAlways {
+                    self.startUpdatingLocation()
+                } else {
+                    print("⚠️ Location permission denied. Please enable it in settings.")
+                }
             }
         }
     }
     
     func startUpdatingLocation() {
-        if CLLocationManager.locationServicesEnabled() {
-            locationManager.startUpdatingLocation()
-        } else {
-            print("⚠️ Location services are disabled.")
+        DispatchQueue.global(qos: .background).async {
+            let status = CLLocationManager.authorizationStatus()
+            
+            DispatchQueue.main.async {
+                if status == .notDetermined {
+                    self.locationManager.requestWhenInUseAuthorization()
+                } else if status == .authorizedWhenInUse || status == .authorizedAlways {
+                    self.locationManager.startUpdatingLocation()
+                }
+            }
         }
     }
     
