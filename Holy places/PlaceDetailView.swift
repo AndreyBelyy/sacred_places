@@ -6,8 +6,8 @@ struct PlaceDetailView: View {
     var onClose: (() -> Void)?
 
     var body: some View {
-        VStack(spacing: 12) { // ✅ Increased spacing between elements
-            // 📸 Full-width Image
+        VStack(spacing: 12) { // ✅ Balanced spacing
+            // 📸 Place Image with Side Padding
             AsyncImage(url: place.imageURL) { phase in
                 if let image = phase.image {
                     image.resizable().scaledToFill()
@@ -15,15 +15,16 @@ struct PlaceDetailView: View {
                     ProgressView()
                 }
             }
-            .frame(maxWidth: .infinity) // ✅ Full-width
-            .frame(height: 200) // ✅ Increased height for better visuals
-            .clipShape(RoundedRectangle(cornerRadius: 20)) // ✅ Smooth rounded corners
-            .padding(.horizontal) // ✅ Align with buttons
+            .frame(maxWidth: .infinity)
+            .frame(height: 200)
+            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+            .padding(.horizontal, 16) // ✅ Added left & right padding
+            .padding(.top, 10) // ✅ Balanced space from top
 
             // 📌 Place Info
-            VStack(alignment: .leading, spacing: 10) { // ✅ More spacing
+            VStack(alignment: .leading, spacing: 12) {
                 Text(place.name)
-                    .font(.title2.bold())
+                    .font(.title3.bold())
                     .foregroundColor(.black)
 
                 Text(place.category.localizedName)
@@ -33,16 +34,16 @@ struct PlaceDetailView: View {
                 Text(place.description)
                     .font(.body)
                     .foregroundColor(.black.opacity(0.85))
+                    .multilineTextAlignment(.leading)
             }
-            .padding(.horizontal)
-            .padding(.bottom, 10) // ✅ Increased spacing before buttons
+            .padding(.horizontal, 16)
 
             // 🎯 Buttons Section
-            VStack(spacing: 14) { // ✅ Even button spacing
+            VStack(spacing: 12) {
                 if let sourceURL = place.sourceURL {
                     Button(action: { openURL(sourceURL) }) {
                         HStack {
-                            Image(systemName: "book.fill") // 📖 Book Icon
+                            Image(systemName: "book.fill")
                                 .font(.system(size: 18))
                             Text("Read More")
                                 .font(.headline)
@@ -51,13 +52,14 @@ struct PlaceDetailView: View {
                         .padding()
                         .background(Color.blue.gradient)
                         .foregroundColor(.white)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .clipShape(RoundedRectangle(cornerRadius: 14))
                     }
+                    .padding(.horizontal, 16)
                 }
 
                 Button(action: { openInMaps() }) {
                     HStack {
-                        Image(systemName: "map.fill") // 🗺️ Map Icon
+                        Image(systemName: "map.fill")
                             .font(.system(size: 18))
                         Text("Get Directions")
                             .font(.headline)
@@ -66,16 +68,17 @@ struct PlaceDetailView: View {
                     .padding()
                     .background(Color.green.gradient)
                     .foregroundColor(.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .clipShape(RoundedRectangle(cornerRadius: 14))
                 }
+                .padding(.horizontal, 16)
             }
-            .padding(.horizontal)
-            .padding(.bottom, 12) // ✅ More bottom space
+            .padding(.bottom, 16) // ✅ Restored bottom spacing
         }
         .background(Color.white)
-        .cornerRadius(20)
-        .shadow(radius: 15)
-        .padding(.horizontal)
+        .cornerRadius(25)
+        .shadow(radius: 12)
+        .padding(.horizontal, 12)
+        .padding(.bottom, 30)
     }
 
     private func openURL(_ url: URL) {
