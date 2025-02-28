@@ -2,9 +2,15 @@ import SwiftUI
 
 @main
 struct Holy_placesApp: App {
+    @State private var showSplash = true  // ✅ Track splash visibility
+
     var body: some Scene {
         WindowGroup {
-            MainTabView()  // ✅ Start with the new tab-based layout
+            if showSplash {
+                SplashScreenView(showSplash: $showSplash)  // ✅ Show splash first
+            } else {
+                MainTabView()  // ✅ Load main app after splash
+            }
         }
     }
 }
