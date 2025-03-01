@@ -17,6 +17,23 @@ struct ClusteredMapView: UIViewRepresentable {
                 parent.selectedPlace = placeAnnotation.place
             }
         }
+
+        // ✅ Replace MKClusterAnnotationView with MKMarkerAnnotationView
+        func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+            if let cluster = annotation as? MKClusterAnnotation {
+                let clusterView = MKMarkerAnnotationView(annotation: cluster, reuseIdentifier: "cluster")
+                clusterView.markerTintColor = .blue
+                return clusterView
+            }
+
+            if let marker = annotation as? PlaceAnnotation {
+                let markerView = MKMarkerAnnotationView(annotation: marker, reuseIdentifier: "marker")
+                markerView.markerTintColor = .red
+                return markerView
+            }
+
+            return nil
+        }
     }
 
     func makeCoordinator() -> Coordinator {
@@ -26,8 +43,8 @@ struct ClusteredMapView: UIViewRepresentable {
     func makeUIView(context: Context) -> MKMapView {
         let mapView = MKMapView()
         mapView.delegate = context.coordinator
-        mapView.register(MKMarkerAnnotationView.self, forAnnotationViewWithReuseIdentifier: NSStringFromClass(MKMarkerAnnotationView.self))
-        mapView.register(MKClusterAnnotationView.self, forAnnotationViewWithReuseIdentifier: NSStringFromClass(MKClusterAnnotationView.self))
+        mapView.register(MKMarkerAnnotationView.self, forAnnotationViewWithReuseIdentifier: "marker") // ✅ Register marker
+        mapView.register(MKMarkerAnnotationView.self, forAnnotationViewWithReuseIdentifier: "cluster") // ✅ Register cluster
         updateAnnotations(for: mapView)
         return mapView
     }
@@ -38,7 +55,6 @@ struct ClusteredMapView: UIViewRepresentable {
 
     private func updateAnnotations(for mapView: MKMapView) {
         mapView.removeAnnotations(mapView.annotations)
-
         let annotations = places.map { PlaceAnnotation(place: $0) }
         mapView.addAnnotations(annotations)
     }

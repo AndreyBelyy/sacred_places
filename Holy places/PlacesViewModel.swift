@@ -590,7 +590,189 @@ class PlacesViewModel: ObservableObject {
                 description: "An important Orthodox church in Berlin, serving the local community.",
                 imageURL: URL(string: "https://upload.wikimedia.org/wikipedia/commons/4/45/Berlin_Orthodox_Church.jpg")!,
                 sourceURL: URL(string: "https://azbyka.ru/palomnik/")!
+            ),
+            // 1. Heiligenkreuz Abbey – Austria
+            // 1. Heiligenkreuz Abbey – Austria
+            // 1. Heiligenkreuz Abbey – Austria
+            Place(
+                name: "Heiligenkreuz Abbey",
+                country: "Austria",
+                city: "Heiligenkreuz",
+                category: .crossParticles,
+                coordinate: CLLocationCoordinate2D(latitude: 48.0552, longitude: 16.1256),
+                description: "A Cistercian monastery in the Vienna Woods, housing a True Cross relic donated in the 12th century.",
+                imageURL: URL(string: "https://upload.wikimedia.org/wikipedia/commons/6/65/Stift_Heiligenkreuz_Kreuzgang.jpg")!,
+                sourceURL: URL(string: "https://www.stift-heiligenkreuz.at/")!
+            ),
+
+            // 2. Mother See of Holy Etchmiadzin – Armenia
+            Place(
+                name: "Mother See of Holy Etchmiadzin",
+                country: "Armenia",
+                city: "Vagharshapat (Ejmiatsin)",
+                category: .crossParticles,
+                coordinate: CLLocationCoordinate2D(latitude: 40.1633, longitude: 44.2934),
+                description: "Spiritual center of the Armenian Apostolic Church, housing a True Cross fragment.",
+                imageURL: URL(string: "https://upload.wikimedia.org/wikipedia/commons/8/85/Ejmiatsin_Cathedral.jpg")!,
+                sourceURL: URL(string: "https://www.armenianchurch.org/")!
+            ),
+
+            // 3. Church of Our Lady (Onthaalkerk) – Belgium
+            Place(
+                name: "Church of Our Lady (Onthaalkerk)",
+                country: "Belgium",
+                city: "Bruges",
+                category: .crossParticles,
+                coordinate: CLLocationCoordinate2D(latitude: 51.2043, longitude: 3.2247),
+                description: "Medieval church with a True Cross relic and Michelangelo’s *Madonna and Child*.",
+                imageURL: URL(string: "https://upload.wikimedia.org/wikipedia/commons/2/2d/Brugge_Church_of_Our_Lady_R01.jpg")!,
+                sourceURL: URL(string: "https://www.brugge.be/")!
+            ),
+
+            // 4. St. Cecilia Church – Germany
+            Place(
+                name: "St. Cecilia Church",
+                country: "Germany",
+                city: "Düsseldorf",
+                category: .crossParticles,
+                coordinate: CLLocationCoordinate2D(latitude: 51.2199, longitude: 6.7866),
+                description: "Historic church in Düsseldorf, traditionally linked to a True Cross relic.",
+                imageURL: URL(string: "https://upload.wikimedia.org/wikipedia/commons/6/66/Duesseldorf.jpg")!,
+                sourceURL: URL(string: "https://www.duesseldorf.de/")!
+            ),
+
+            // 5. Iviron Monastery (Mount Athos) – Greece
+            Place(
+                name: "Iviron Monastery",
+                country: "Greece",
+                city: "Mount Athos",
+                category: .crossParticles,
+                coordinate: CLLocationCoordinate2D(latitude: 40.2646, longitude: 24.2771),
+                description: "Georgian-founded monastery on Mount Athos, preserving a True Cross relic.",
+                imageURL: URL(string: "https://upload.wikimedia.org/wikipedia/commons/3/39/Iviron_Monastery.jpg")!,
+                sourceURL: URL(string: "https://www.athos.ru/")!
+            ),
+
+            // 6. Svetitskhoveli Cathedral – Georgia
+            Place(
+                name: "Svetitskhoveli Cathedral",
+                country: "Georgia",
+                city: "Mtskheta",
+                category: .crossParticles,
+                coordinate: CLLocationCoordinate2D(latitude: 41.8407, longitude: 44.7188),
+                description: "UNESCO-listed cathedral, said to hold Christ’s robe and a True Cross fragment.",
+                imageURL: URL(string: "https://upload.wikimedia.org/wikipedia/commons/e/e7/Svetitskhoveli_Cathedral.jpg")!,
+                sourceURL: URL(string: "https://whc.unesco.org/en/list/708/")!
+            ),
+
+            // 7. Church of the Holy Sepulchre – Israel
+            Place(
+                name: "Church of the Holy Sepulchre",
+                country: "Israel",
+                city: "Jerusalem",
+                category: .crossParticles,
+                coordinate: CLLocationCoordinate2D(latitude: 31.7784, longitude: 35.2296),
+                description: "Contains the largest True Cross fragment in the Chapel of the Cross.",
+                imageURL: URL(string: "https://upload.wikimedia.org/wikipedia/commons/3/3f/Church_of_the_Holy_Sepulchre.jpg")!,
+                sourceURL: URL(string: "https://www.custodia.org/")!
+            ),
+
+            // 8. Monasterio de Santo Toribio de Liébana – Spain
+            Place(
+                name: "Monasterio de Santo Toribio de Liébana",
+                country: "Spain",
+                city: "Camaleño (Cantabria)",
+                category: .crossParticles,
+                coordinate: CLLocationCoordinate2D(latitude: 43.1465, longitude: -4.6142),
+                description: "Holds the *Lignum Crucis*, a major True Cross relic.",
+                imageURL: URL(string: "https://upload.wikimedia.org/wikipedia/commons/f/f7/Monasterio_de_Santo_Toribio_de_Li%C3%A9bana.jpg")!,
+                sourceURL: URL(string: "https://www.turismodecantabria.com/")!
+            ),
+
+            // 9. Basilica di Santa Croce in Gerusalemme – Italy
+            Place(
+                name: "Basilica di Santa Croce in Gerusalemme",
+                country: "Italy",
+                city: "Rome",
+                category: .crossParticles,
+                coordinate: CLLocationCoordinate2D(latitude: 41.8862, longitude: 12.5122),
+                description: "Built by St. Helena, houses earth from Golgotha and True Cross fragments.",
+                imageURL: URL(string: "https://upload.wikimedia.org/wikipedia/commons/3/3e/Basilica_di_Santa_Croce_in_Gerusalemme_Roma.jpg")!,
+                sourceURL: URL(string: "https://www.rome.net/")!
+            ),
+
+            // 10. Stavrovouni Monastery – Cyprus
+            Place(
+                name: "Stavrovouni Monastery",
+                country: "Cyprus",
+                city: "Larnaca District",
+                category: .crossParticles,
+                coordinate: CLLocationCoordinate2D(latitude: 34.8740, longitude: 33.4333),
+                description: "Founded by St. Helena, with a True Cross fragment in a silver cross.",
+                imageURL: URL(string: "https://upload.wikimedia.org/wikipedia/commons/5/57/Stavrovouni_monastery%2C_Larnaca_-_panoramio_%2812%29.jpg")!,
+                sourceURL: URL(string: "https://www.visitcyprus.com/")!
+            ),
+
+            // 11. Old Believers' Grebenshchikov Cathedral – Latvia
+            Place(
+                name: "Old Believers' Grebenshchikov Cathedral",
+                country: "Latvia",
+                city: "Riga",
+                category: .crossParticles,
+                coordinate: CLLocationCoordinate2D(latitude: 56.9438, longitude: 24.1240),
+                description: "Old Believers’ cathedral safeguarding a True Cross fragment.",
+                imageURL: URL(string: "https://upload.wikimedia.org/wikipedia/commons/2/20/Grebenshchikov_church.jpg")!,
+                sourceURL: URL(string: "https://www.riga.lv/")!
+            ),
+
+            // 12. Alexander-Svirsky Monastery – Russia
+            Place(
+                name: "Alexander-Svirsky Monastery",
+                country: "Russia",
+                city: "Staraya Sloboda (Leningrad Oblast)",
+                category: .crossParticles,
+                coordinate: CLLocationCoordinate2D(latitude: 60.9968, longitude: 35.0565),
+                description: "15th-century monastery with a True Cross relic.",
+                imageURL: URL(string: "https://upload.wikimedia.org/wikipedia/commons/6/6b/Alexander-Svirsky_Monastery.jpg")!,
+                sourceURL: URL(string: "https://www.russianmonasteries.org/")!
+            ),
+
+            // 13. Krestovozdvizhenska Church – Ukraine
+            Place(
+                name: "Krestovozdvizhenska Church",
+                country: "Ukraine",
+                city: "Vinnytsia",
+                category: .crossParticles,
+                coordinate: CLLocationCoordinate2D(latitude: 49.2322, longitude: 28.4682),
+                description: "19th-century church housing a True Cross fragment.",
+                imageURL: URL(string: "https://upload.wikimedia.org/wikipedia/commons/9/98/Vinnytsia_Orthodox_Church.jpg")!,
+                sourceURL: URL(string: "https://visit.vinnytsia.ua/")!
+            ),
+
+            // 14. Notre-Dame de Paris – France
+            Place(
+                name: "Notre-Dame de Paris",
+                country: "France",
+                city: "Paris",
+                category: .crossParticles,
+                coordinate: CLLocationCoordinate2D(latitude: 48.8530, longitude: 2.3499),
+                description: "Housed a True Cross fragment before the 2019 fire; relic status unclear post-restoration.",
+                imageURL: URL(string: "https://upload.wikimedia.org/wikipedia/commons/6/6f/Notre_Dame_de_Paris.jpg")!,
+                sourceURL: URL(string: "https://www.notredamedeparis.fr/")!
+            ),
+
+            // 15. Cetinje Monastery – Montenegro
+            Place(
+                name: "Cetinje Monastery",
+                country: "Montenegro",
+                city: "Cetinje",
+                category: .crossParticles,
+                coordinate: CLLocationCoordinate2D(latitude: 42.3905, longitude: 18.9154),
+                description: "Holds a True Cross relic once owned by the Russian Imperial family.",
+                imageURL: URL(string: "https://upload.wikimedia.org/wikipedia/commons/d/d0/Cetinjski_manastir.JPG")!,
+                sourceURL: URL(string: "https://www.montenegro.travel/")!
             )
+            
         ]
     
     // Function to get places grouped by country and category

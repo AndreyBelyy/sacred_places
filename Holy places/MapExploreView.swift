@@ -4,19 +4,13 @@ import MapKit
 struct MapExploreView: View {
     @StateObject private var locationManager = LocationManager.shared
     @StateObject private var viewModel = PlacesViewModel.shared
-
+    
     @State private var selectedPlace: Place?
     @State private var showFilterSheet = false
     @State private var selectedCategories: Set<HolyPlaceCategory> = []
     @State private var selectedCountry: String? = nil
     @State private var selectedCity: String? = nil
-
-    // ✅ Store current map position to prevent auto-reset
-    @State private var mapRegion = MKCoordinateRegion(
-        center: CLLocationCoordinate2D(latitude: 41.9028, longitude: 12.4964), // Default: Rome
-        span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
-    )
-
+    
     var filteredPlaces: [Place] {
         var places = viewModel.places
         if !selectedCategories.isEmpty {
@@ -30,65 +24,42 @@ struct MapExploreView: View {
         }
         return places
     }
-
+    
     var body: some View {
-        ZStack(alignment: .top) {
-            // ✅ Use `mapRegion` to keep position after closing place detail
-            Map(coordinateRegion: $mapRegion, annotationItems: filteredPlaces) { place in
-                MapAnnotation(coordinate: place.coordinate) {
-                    Button(action: {
-                        selectedPlace = place
-                        mapRegion.center = place.coordinate // ✅ Move map to selected place
-                    }) {
-                        VStack(spacing: 5) {
-                            Image(systemName: "mappin.circle.fill")
-                                .foregroundColor(.red)
-                                .font(.title)
-                            
-                            Text(place.name)
-                                .font(.caption)
-                                .bold()
-                                .padding(5)
-                                .background(Color.white.opacity(0.9))
-                                .cornerRadius(5)
-                                .foregroundColor(.black)
-                        }
-                    }
+        ZStack(alignment: .topTrailing) {
+            // 📍 Clustered Map View
+            ClusteredMapView(selectedPlace: $selectedPlace, places: filteredPlaces)
+                .ignoresSafeArea()
+            
+            // 🎛 Filter Button - pinned to top right
+            Button(action: { showFilterSheet.toggle() }) {
+                HStack {
+                    Image(systemName: "slider.horizontal.3")
+                    Text("Filters")
                 }
+                .padding(12)
+                .background(Color.white.opacity(0.9))
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .shadow(radius: 4)
             }
-            .ignoresSafeArea()
-
-            // 🎛 **Filter Button**
-            HStack {
-                Button(action: { showFilterSheet.toggle() }) {
-                    HStack {
-                        Image(systemName: "slider.horizontal.3")
-                        Text("Filters")
-                    }
-                    .padding(10)
-                    .background(Color.white.opacity(0.9))
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                    .shadow(radius: 4)
-                }
-                Spacer()
-            }
-            .padding(.horizontal)
-            .padding(.top, 12)
-
-            // 📌 **Show Place Detail in Center of Screen**
+            .padding(.top, 16)       // top padding to move below the status bar
+            .padding(.trailing, 16) // right padding for spacing from the screen edge
+            
+            // 📌 Centered Place Detail View
             if let place = selectedPlace {
                 ZStack {
-                    Color.black.opacity(0.3) // ✅ Dimmed background
-                        .ignoresSafeArea()
-                        .onTapGesture { selectedPlace = nil } // ✅ Tap outside to close
-
-                    VStack {
-                        Spacer()
-                        PlaceDetailView(place: place, onClose: { selectedPlace = nil })
-                        Spacer()
-                    }
+                    Color.black.opacity(0.3)
+                        .edgesIgnoringSafeArea(.all)
+                        .onTapGesture { selectedPlace = nil }
+                    
+                    PlaceDetailView(place: place, onClose: { selectedPlace = nil })
+                        .frame(maxWidth: 350)
+                        .background(Color.white)
+                        .cornerRadius(20)
+                        .shadow(radius: 10)
+                        .padding(.horizontal, 20)
                 }
-                .transition(.opacity)
+                .transition(.scale)
                 .animation(.easeInOut, value: selectedPlace)
             }
         }

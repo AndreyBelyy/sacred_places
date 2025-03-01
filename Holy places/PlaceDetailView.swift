@@ -7,18 +7,6 @@ struct PlaceDetailView: View {
 
     var body: some View {
         VStack(spacing: 12) {
-            // 📌 Close Button
-            HStack {
-                Spacer()
-                Button(action: {
-                    onClose?()  // ✅ Call close action
-                }) {
-                    Image(systemName: "xmark.circle.fill")
-                        .font(.title)
-                        .foregroundColor(.gray)
-                }
-                .padding(.trailing, 16)
-            }
 
             // 📸 Place Image
             AsyncImage(url: place.imageURL) { phase in
