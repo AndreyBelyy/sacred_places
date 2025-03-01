@@ -11,9 +11,14 @@ struct MapExploreView: View {
     @State private var selectedCountry: String? = nil
     @State private var selectedCity: String? = nil
 
+    // ✅ Store current map position to prevent auto-reset
+    @State private var mapRegion = MKCoordinateRegion(
+        center: CLLocationCoordinate2D(latitude: 41.9028, longitude: 12.4964), // Default: Rome
+        span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
+    )
+
     var filteredPlaces: [Place] {
         var places = viewModel.places
-
         if !selectedCategories.isEmpty {
             places = places.filter { selectedCategories.contains($0.category) }
         }
@@ -23,19 +28,18 @@ struct MapExploreView: View {
         if let city = selectedCity {
             places = places.filter { $0.city == city }
         }
-
         return places
     }
 
     var body: some View {
         ZStack(alignment: .top) {
-            // 📍 Map with filtered places
-            Map(coordinateRegion: .constant(MKCoordinateRegion(
-                center: locationManager.userLocation?.coordinate ?? CLLocationCoordinate2D(latitude: 41.9028, longitude: 12.4964),
-                span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
-            )), annotationItems: filteredPlaces) { place in
+            // ✅ Use `mapRegion` to keep position after closing place detail
+            Map(coordinateRegion: $mapRegion, annotationItems: filteredPlaces) { place in
                 MapAnnotation(coordinate: place.coordinate) {
-                    Button(action: { selectedPlace = place }) {
+                    Button(action: {
+                        selectedPlace = place
+                        mapRegion.center = place.coordinate // ✅ Move map to selected place
+                    }) {
                         VStack(spacing: 5) {
                             Image(systemName: "mappin.circle.fill")
                                 .foregroundColor(.red)
@@ -71,11 +75,21 @@ struct MapExploreView: View {
             .padding(.horizontal)
             .padding(.top, 12)
 
-            // 📌 Show Place Detail when tapping a pin
+            // 📌 **Show Place Detail in Center of Screen**
             if let place = selectedPlace {
-                PlaceDetailView(place: place, onClose: { selectedPlace = nil })
-                    .transition(.move(edge: .bottom))
-                    .animation(.easeInOut, value: selectedPlace)
+                ZStack {
+                    Color.black.opacity(0.3) // ✅ Dimmed background
+                        .ignoresSafeArea()
+                        .onTapGesture { selectedPlace = nil } // ✅ Tap outside to close
+
+                    VStack {
+                        Spacer()
+                        PlaceDetailView(place: place, onClose: { selectedPlace = nil })
+                        Spacer()
+                    }
+                }
+                .transition(.opacity)
+                .animation(.easeInOut, value: selectedPlace)
             }
         }
         .sheet(isPresented: $showFilterSheet) {

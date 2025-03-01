@@ -65,15 +65,6 @@ struct FilterSheet: View {
                         .pickerStyle(.menu)
                     }
                 }
-
-                // ✅ Manual Cache Clearing
-                Section {
-                    Button(action: clearCache) {
-                        Text("Clear Cache")
-                            .font(.headline)
-                            .foregroundColor(.red)
-                    }
-                }
             }
             .navigationTitle("Filters")
             .toolbar {

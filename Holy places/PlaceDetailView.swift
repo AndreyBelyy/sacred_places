@@ -3,11 +3,24 @@ import MapKit
 
 struct PlaceDetailView: View {
     let place: Place
-    var onClose: (() -> Void)?
+    var onClose: (() -> Void)?  // ✅ Callback to close the view
 
     var body: some View {
-        VStack(spacing: 12) { // ✅ Balanced spacing
-            // 📸 Place Image with Side Padding
+        VStack(spacing: 12) {
+            // 📌 Close Button
+            HStack {
+                Spacer()
+                Button(action: {
+                    onClose?()  // ✅ Call close action
+                }) {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.title)
+                        .foregroundColor(.gray)
+                }
+                .padding(.trailing, 16)
+            }
+
+            // 📸 Place Image
             AsyncImage(url: place.imageURL) { phase in
                 if let image = phase.image {
                     image.resizable().scaledToFill()
@@ -17,15 +30,13 @@ struct PlaceDetailView: View {
             }
             .frame(maxWidth: .infinity)
             .frame(height: 200)
-            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-            .padding(.horizontal, 16) // ✅ Added left & right padding
-            .padding(.top, 10) // ✅ Balanced space from top
+            .clipShape(RoundedRectangle(cornerRadius: 20))
+            .padding(.horizontal, 16)
 
-            // 📌 Place Info
+            // 📝 Place Info
             VStack(alignment: .leading, spacing: 12) {
                 Text(place.name)
                     .font(.title3.bold())
-                    .foregroundColor(.black)
 
                 Text(place.category.localizedName)
                     .font(.subheadline)
@@ -33,20 +44,17 @@ struct PlaceDetailView: View {
 
                 Text(place.description)
                     .font(.body)
-                    .foregroundColor(.black.opacity(0.85))
                     .multilineTextAlignment(.leading)
             }
             .padding(.horizontal, 16)
 
-            // 🎯 Buttons Section
+            // 🎯 Buttons
             VStack(spacing: 12) {
                 if let sourceURL = place.sourceURL {
                     Button(action: { openURL(sourceURL) }) {
                         HStack {
                             Image(systemName: "book.fill")
-                                .font(.system(size: 18))
                             Text("Read More")
-                                .font(.headline)
                         }
                         .frame(maxWidth: .infinity)
                         .padding()
@@ -60,9 +68,7 @@ struct PlaceDetailView: View {
                 Button(action: { openInMaps() }) {
                     HStack {
                         Image(systemName: "map.fill")
-                            .font(.system(size: 18))
                         Text("Get Directions")
-                            .font(.headline)
                     }
                     .frame(maxWidth: .infinity)
                     .padding()
@@ -72,13 +78,13 @@ struct PlaceDetailView: View {
                 }
                 .padding(.horizontal, 16)
             }
-            .padding(.bottom, 16) // ✅ Restored bottom spacing
+            .padding(.bottom, 16)
         }
+        .frame(width: 350) // ✅ Set a fixed width
         .background(Color.white)
         .cornerRadius(25)
         .shadow(radius: 12)
         .padding(.horizontal, 12)
-        .padding(.bottom, 30)
     }
 
     private func openURL(_ url: URL) {
