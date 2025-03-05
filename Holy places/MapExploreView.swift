@@ -10,7 +10,8 @@ struct MapExploreView: View {
     @State private var selectedCategories: Set<HolyPlaceCategory> = []
     @State private var selectedCountry: String? = nil
     @State private var selectedCity: String? = nil
-    
+    @State private var returningFromMaps = false  // ✅ Track if user returns from Apple Maps
+
     var filteredPlaces: [Place] {
         var places = viewModel.places
         if !selectedCategories.isEmpty {
@@ -24,13 +25,18 @@ struct MapExploreView: View {
         }
         return places
     }
-    
+
     var body: some View {
         ZStack(alignment: .topTrailing) {
             // 📍 Clustered Map View
             ClusteredMapView(selectedPlace: $selectedPlace, places: filteredPlaces)
                 .ignoresSafeArea()
-            
+                .onAppear {
+                    if returningFromMaps {
+                        returningFromMaps = false  // ✅ Reset when user returns from Apple Maps
+                    }
+                }
+
             // 🎛 Filter Button - pinned to top right
             Button(action: { showFilterSheet.toggle() }) {
                 HStack {
@@ -42,22 +48,26 @@ struct MapExploreView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 .shadow(radius: 4)
             }
-            .padding(.top, 16)       // top padding to move below the status bar
-            .padding(.trailing, 16) // right padding for spacing from the screen edge
-            
+            .padding(.top, 16)
+            .padding(.trailing, 16)
+
             // 📌 Centered Place Detail View
             if let place = selectedPlace {
                 ZStack {
                     Color.black.opacity(0.3)
                         .edgesIgnoringSafeArea(.all)
                         .onTapGesture { selectedPlace = nil }
-                    
-                    PlaceDetailView(place: place, onClose: { selectedPlace = nil })
-                        .frame(maxWidth: 350)
-                        .background(Color.white)
-                        .cornerRadius(20)
-                        .shadow(radius: 10)
-                        .padding(.horizontal, 20)
+
+                    PlaceDetailView(
+                        place: place,
+                        onClose: { selectedPlace = nil },
+                        onDirections: { returningFromMaps = true } // ✅ Notify when opening Apple Maps
+                    )
+                    .frame(maxWidth: 350)
+                    .background(Color.white)
+                    .cornerRadius(20)
+                    .shadow(radius: 10)
+                    .padding(.horizontal, 20)
                 }
                 .transition(.scale)
                 .animation(.easeInOut, value: selectedPlace)

@@ -3,11 +3,11 @@ import MapKit
 
 struct PlaceDetailView: View {
     let place: Place
-    var onClose: (() -> Void)?  // ✅ Callback to close the view
+    var onClose: (() -> Void)?
+    var onDirections: (() -> Void)?  // ✅ Callback for opening Apple Maps
 
     var body: some View {
         VStack(spacing: 12) {
-
             // 📸 Place Image
             AsyncImage(url: place.imageURL) { phase in
                 if let image = phase.image {
@@ -53,7 +53,10 @@ struct PlaceDetailView: View {
                     .padding(.horizontal, 16)
                 }
 
-                Button(action: { openInMaps() }) {
+                Button(action: {
+                    onDirections?()  // ✅ Notify that Apple Maps is opened
+                    openInMaps()
+                }) {
                     HStack {
                         Image(systemName: "map.fill")
                         Text("Get Directions")
@@ -68,7 +71,7 @@ struct PlaceDetailView: View {
             }
             .padding(.bottom, 16)
         }
-        .frame(width: 350) // ✅ Set a fixed width
+        .frame(width: 350)
         .background(Color.white)
         .cornerRadius(25)
         .shadow(radius: 12)
