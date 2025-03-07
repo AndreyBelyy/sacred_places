@@ -10,13 +10,43 @@ import SwiftUI
 struct ExploreView: View {
     @AppStorage("searchText") private var searchText = "" // ✅ Save search term
     @State private var selectedCity: String? = nil
+    @State private var selectedCountry: String? = nil
     @State private var selectedCategory: HolyPlaceCategory? = nil
 
     @StateObject private var viewModel = PlacesViewModel.shared
 
+    // 🔹 **Filtered Countries** (If a city is selected, show only its country)
+    var filteredCountries: [String] {
+        if let city = selectedCity {
+            return Array(Set(viewModel.places.filter { $0.city == city }.map { $0.country })).sorted()
+        }
+        return Array(Set(viewModel.places.map { $0.country })).sorted()
+    }
+
+    // 🔹 **Filtered Cities** (If a country is selected, show only its cities)
+    var filteredCities: [String] {
+        if let country = selectedCountry {
+            return Array(Set(viewModel.places.filter { $0.country == country }.compactMap { $0.city })).sorted()
+        }
+        return Array(Set(viewModel.places.compactMap { $0.city })).sorted()
+    }
+
+    // 🔹 **Filtered Categories** (If a city or country is selected, only show relevant categories)
+    var filteredCategories: [HolyPlaceCategory] {
+        var places = viewModel.places
+        if let country = selectedCountry {
+            places = places.filter { $0.country == country }
+        }
+        if let city = selectedCity {
+            places = places.filter { $0.city == city }
+        }
+        return Array(Set(places.map { $0.category })).sorted { $0.rawValue < $1.rawValue }
+    }
+
     var filteredPlaces: [Place] {
         viewModel.places.filter { place in
             (searchText.isEmpty || place.name.localizedCaseInsensitiveContains(searchText)) &&
+            (selectedCountry == nil || place.country == selectedCountry) &&
             (selectedCity == nil || place.city == selectedCity) &&
             (selectedCategory == nil || place.category == selectedCategory)
         }
@@ -32,26 +62,45 @@ struct ExploreView: View {
 
                     // 🔹 **Filter Buttons**
                     HStack(spacing: 10) {
-                        // **City Filter**
+                        // **Country Filter**
                         Menu {
-                            Button("All cities", action: { selectedCity = nil })
+                            Button("All Countries", action: { selectedCountry = nil })
                             Divider()
-                            ForEach(Set(viewModel.places.compactMap { $0.city }).sorted(), id: \.self) { city in
-                                Button(city) { selectedCity = city }
+                            ForEach(filteredCountries, id: \.self) { country in
+                                Button(country) {
+                                    selectedCountry = country
+                                    selectedCity = nil // ✅ Reset city when country is selected
+                                    selectedCategory = nil // ✅ Reset category to match new country
+                                }
                             }
                         } label: {
-                            FilterButton(title: selectedCity ?? "All cities")
+                            FilterButton(title: selectedCountry ?? "All Countries")
+                        }
+
+                        // **City Filter**
+                        Menu {
+                            Button("All Cities", action: { selectedCity = nil })
+                            Divider()
+                            ForEach(filteredCities, id: \.self) { city in
+                                Button(city) {
+                                    selectedCity = city
+                                    selectedCountry = viewModel.places.first { $0.city == city }?.country // ✅ Auto-select country
+                                    selectedCategory = nil // ✅ Reset category to match new city
+                                }
+                            }
+                        } label: {
+                            FilterButton(title: selectedCity ?? "All Cities")
                         }
 
                         // **Category Filter**
                         Menu {
-                            Button("All types", action: { selectedCategory = nil })
+                            Button("All Types", action: { selectedCategory = nil })
                             Divider()
-                            ForEach(HolyPlaceCategory.allCases, id: \.self) { category in
+                            ForEach(filteredCategories, id: \.self) { category in
                                 Button(category.localizedName) { selectedCategory = category }
                             }
                         } label: {
-                            FilterButton(title: selectedCategory?.localizedName ?? "All types")
+                            FilterButton(title: selectedCategory?.localizedName ?? "All Types")
                         }
                     }
                 }

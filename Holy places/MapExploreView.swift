@@ -10,7 +10,7 @@ struct MapExploreView: View {
     @State private var selectedCategories: Set<HolyPlaceCategory> = []
     @State private var selectedCountry: String? = nil
     @State private var selectedCity: String? = nil
-    @State private var returningFromMaps = false  // ✅ Track if user returns from Apple Maps
+    @State private var mapRegion: MKCoordinateRegion?  // ✅ Track user's region
 
     var filteredPlaces: [Place] {
         var places = viewModel.places
@@ -29,15 +29,23 @@ struct MapExploreView: View {
     var body: some View {
         ZStack(alignment: .topTrailing) {
             // 📍 Clustered Map View
-            ClusteredMapView(selectedPlace: $selectedPlace, places: filteredPlaces)
-                .ignoresSafeArea()
-                .onAppear {
-                    if returningFromMaps {
-                        returningFromMaps = false  // ✅ Reset when user returns from Apple Maps
-                    }
+            ClusteredMapView(
+                selectedPlace: $selectedPlace,
+                places: filteredPlaces,
+                mapRegion: $mapRegion  // ✅ Pass region
+            )
+            .ignoresSafeArea()
+            .onAppear {
+                if mapRegion == nil, let userLocation = locationManager.userLocation {
+                    // ✅ Set initial region to user location
+                    mapRegion = MKCoordinateRegion(
+                        center: userLocation.coordinate,
+                        span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
+                    )
                 }
+            }
 
-            // 🎛 Filter Button - pinned to top right
+            // 🎛 Filter Button
             Button(action: { showFilterSheet.toggle() }) {
                 HStack {
                     Image(systemName: "slider.horizontal.3")
@@ -51,23 +59,19 @@ struct MapExploreView: View {
             .padding(.top, 16)
             .padding(.trailing, 16)
 
-            // 📌 Centered Place Detail View
+            // 📌 Place Detail View
             if let place = selectedPlace {
                 ZStack {
                     Color.black.opacity(0.3)
                         .edgesIgnoringSafeArea(.all)
                         .onTapGesture { selectedPlace = nil }
 
-                    PlaceDetailView(
-                        place: place,
-                        onClose: { selectedPlace = nil },
-                        onDirections: { returningFromMaps = true } // ✅ Notify when opening Apple Maps
-                    )
-                    .frame(maxWidth: 350)
-                    .background(Color.white)
-                    .cornerRadius(20)
-                    .shadow(radius: 10)
-                    .padding(.horizontal, 20)
+                    PlaceDetailView(place: place, onClose: { selectedPlace = nil })
+                        .frame(maxWidth: 350)
+                        .background(Color.white)
+                        .cornerRadius(20)
+                        .shadow(radius: 10)
+                        .padding(.horizontal, 20)
                 }
                 .transition(.scale)
                 .animation(.easeInOut, value: selectedPlace)
