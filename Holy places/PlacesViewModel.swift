@@ -2,15 +2,26 @@ import SwiftUI
 import CoreLocation
 
 // Enum for different categories of holy places
+// Enum for different main categories of holy places
+// Main categories of holy places
 enum HolyPlaceCategory: String, CaseIterable {
     case monasteryComplexes = "Monastery Complexes"
+    case churches = "Churches"  // ✅ Churches now include relics & icons
     case holySprings = "Holy Springs"
     case apparitionSites = "Apparition Sites"
+
+    var localizedName: String {
+        return NSLocalizedString(self.rawValue, comment: "")
+    }
+}
+
+// Subcategories for Churches (Relics, Icons, Particles)
+enum ChurchSubcategory: String, CaseIterable {
+    case generalChurch = "General Church"
     case holyRelics = "Holy Relics"
     case crossParticles = "Cross Particles"
     case miracleIcons = "Miracle Icons"
-    case relicsOfTheSaints = "Relics of the Saints"
-    
+
     var localizedName: String {
         return NSLocalizedString(self.rawValue, comment: "")
     }
@@ -20,14 +31,14 @@ struct Place: Identifiable, Hashable {
     let id = UUID()
     let name: String
     let country: String
-    let city: String? // ✅ Added city field
+    let city: String?
     let category: HolyPlaceCategory
+    let subcategory: ChurchSubcategory? = nil // ✅ Only used for churches
     let coordinate: CLLocationCoordinate2D
     let description: String
     let imageURL: URL
-    let sourceURL: URL? // ✅ Authority source for more info
+    let sourceURL: URL?
 
-    // ✅ Conform to `Hashable`
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }
