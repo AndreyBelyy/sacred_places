@@ -40,7 +40,7 @@ struct SplashScreenView: View {
             }
         }
         .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) { // ✅ Show for 5s
+            DispatchQueue.main.asyncAfter(deadline: .now() + 7.0) { // ✅ Show for 7s
                 withAnimation {
                     showSplash = false  // ✅ Transition to main app
                 }

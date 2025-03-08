@@ -12,6 +12,7 @@ struct ExploreView: View {
     @State private var selectedCity: String? = nil
     @State private var selectedCountry: String? = nil
     @State private var selectedCategory: HolyPlaceCategory? = nil
+    @State private var selectedSubcategory: ChurchSubcategory? = nil // ✅ Add subcategory filtering
 
     @StateObject private var viewModel = PlacesViewModel.shared
 
@@ -48,7 +49,8 @@ struct ExploreView: View {
             (searchText.isEmpty || place.name.localizedCaseInsensitiveContains(searchText)) &&
             (selectedCountry == nil || place.country == selectedCountry) &&
             (selectedCity == nil || place.city == selectedCity) &&
-            (selectedCategory == nil || place.category == selectedCategory)
+            (selectedCategory == nil || place.category == selectedCategory) &&
+            (selectedSubcategory == nil || place.subcategory == selectedSubcategory) // ✅ Filter by subcategory
         }
     }
 
@@ -71,6 +73,7 @@ struct ExploreView: View {
                                     selectedCountry = country
                                     selectedCity = nil // ✅ Reset city when country is selected
                                     selectedCategory = nil // ✅ Reset category to match new country
+                                    selectedSubcategory = nil
                                 }
                             }
                         } label: {
@@ -85,7 +88,8 @@ struct ExploreView: View {
                                 Button(city) {
                                     selectedCity = city
                                     selectedCountry = viewModel.places.first { $0.city == city }?.country // ✅ Auto-select country
-                                    selectedCategory = nil // ✅ Reset category to match new city
+                                    selectedCategory = nil
+                                    selectedSubcategory = nil
                                 }
                             }
                         } label: {
@@ -93,14 +97,31 @@ struct ExploreView: View {
                         }
 
                         // **Category Filter**
+                        // 🔹 Merged categories & subcategories into one menu
                         Menu {
-                            Button("All Types", action: { selectedCategory = nil })
+                            Button("All Types", action: { selectedCategory = nil; selectedSubcategory = nil })
                             Divider()
-                            ForEach(filteredCategories, id: \.self) { category in
-                                Button(category.localizedName) { selectedCategory = category }
+
+                            // Iterate over main categories
+                            ForEach(HolyPlaceCategory.allCases, id: \.self) { category in
+                                Button(category.localizedName) {
+                                    selectedCategory = category
+                                    selectedSubcategory = nil
+                                }
+
+                                // ✅ If category is "Churches," show subcategories as nested options
+                                if category == .churches {
+                                    ForEach(ChurchSubcategory.allCases, id: \.self) { subcategory in
+                                        Button("  \(subcategory.localizedName)") {
+                                            selectedCategory = .churches
+                                            selectedSubcategory = subcategory
+                                        }
+                                    }
+                                }
                             }
                         } label: {
-                            FilterButton(title: selectedCategory?.localizedName ?? "All Types")
+                            FilterButton(title: selectedSubcategory?.localizedName ?? selectedCategory?.localizedName ?? "All Types")
+                        
                         }
                     }
                 }
