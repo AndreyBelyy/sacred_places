@@ -1,39 +1,53 @@
-//
-//  CachedAsyncImage.swift
-//  Holy places
-//
-//  Created by Andrei Belyi on 08/03/25.
-//
-
-
 import SwiftUI
+import Foundation
 
-struct CachedAsyncImage: View {
-    let url: URL?
-    
+struct CachedAsyncImage<Content: View, Placeholder: View>: View {
+    private let url: URL?
+    private let placeholder: () -> Placeholder
+    private let image: (Image) -> Content
+
+    @State private var cachedImage: UIImage?
+
+    init(
+        url: URL?,
+        @ViewBuilder placeholder: @escaping () -> Placeholder,
+        @ViewBuilder image: @escaping (Image) -> Content
+    ) {
+        self.url = url
+        self.placeholder = placeholder
+        self.image = image
+    }
+
     var body: some View {
-        if let url = url {
-            AsyncImage(url: url, transaction: Transaction(animation: .easeInOut)) { phase in
-                switch phase {
-                case .success(let image):
-                    image
-                        .resizable()
-                        .scaledToFill()
-                        .transition(.opacity) // ✅ Smooth transition
-                case .failure:
-                    Image(systemName: "photo") // ✅ Placeholder if the image fails
-                        .resizable()
-                        .scaledToFit()
-                        .foregroundColor(.gray)
-                default:
-                    ProgressView() // ✅ Show loading indicator
-                }
-            }
+        if let uiImage = cachedImage {
+            image(Image(uiImage: uiImage))
         } else {
-            Image(systemName: "photo") // ✅ Placeholder for missing URL
-                .resizable()
-                .scaledToFit()
-                .foregroundColor(.gray)
+            placeholder()
+                .onAppear {
+                    loadImage()
+                }
         }
+    }
+
+    private func loadImage() {
+        guard let url = url else { return }
+
+        if let cachedImage = ImageCache.shared.image(for: url) {
+            self.cachedImage = cachedImage
+        } else {
+            downloadImage(from: url)
+        }
+    }
+
+    private func downloadImage(from url: URL) {
+        URLSession.shared.dataTask(with: url) { data, _, _ in
+            guard let data = data, let uiImage = UIImage(data: data) else { return }
+            
+            DispatchQueue.main.async {
+                self.cachedImage = uiImage
+            }
+            
+            ImageCache.shared.store(image: uiImage, for: url)
+        }.resume()
     }
 }

@@ -7,10 +7,22 @@ struct PlacePreviewCard: View {
 
     var body: some View {
         VStack {
-            // ✅ Use Cached Image to Avoid Re-Loading
-            CachedAsyncImage(url: place.imageURL)
-                .frame(height: 150)
-                .clipShape(RoundedRectangle(cornerRadius: 15))
+            // ✅ Use Cached Image with Placeholder
+            CachedAsyncImage(
+                url: place.imageURL,
+                placeholder: {
+                    ProgressView()
+                        .frame(height: 150)
+                        .frame(maxWidth: .infinity)
+                        .background(Color.gray.opacity(0.3))
+                },
+                image: { image in
+                    image.resizable()
+                        .scaledToFill()
+                        .frame(height: 150)
+                        .clipShape(RoundedRectangle(cornerRadius: 15))
+                }
+            )
 
             Text(place.name)
                 .font(.headline)
