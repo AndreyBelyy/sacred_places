@@ -4,84 +4,81 @@ import MapKit
 struct PlaceDetailView: View {
     let place: Place
     var onClose: (() -> Void)?
-    var onDirections: (() -> Void)?  // ✅ Callback for opening Apple Maps
-
+    var onDirections: (() -> Void)?
+    
     var body: some View {
-        VStack(spacing: 12) {
-            // 📸 Place Image
-            AsyncImage(url: place.imageURL) { phase in
-                if let image = phase.image {
-                    image.resizable().scaledToFill()
-                } else {
-                    ProgressView()
+            VStack(spacing: 0) {
+                // 1) Load the image with no manual clipping
+                AsyncImage(url: place.imageURL) { phase in
+                    if let image = phase.image {
+                        image
+                            .resizable()
+                            // 2) Scale to fit so the whole image is visible
+                            .scaledToFit()
+                            // 3) Make it fill the card’s width
+                            .frame(maxWidth: .infinity)
+                    } else {
+                        ProgressView()
+                    }
                 }
-            }
-            .frame(maxWidth: .infinity)
-            .frame(height: 200)
-            .clipShape(RoundedRectangle(cornerRadius: 20))
-            .padding(.horizontal, 16)
 
-            // 📝 Place Info
-            VStack(alignment: .leading, spacing: 12) {
-                Text(place.name)
-                    .font(.title3.bold())
+                // 4) Content below the image
+                VStack(alignment: .leading, spacing: 12) {
+                    Text(place.name)
+                        .font(.title3.bold())
+                    Text(place.category.localizedName)
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                    Text(place.description)
+                        .font(.body)
 
-                Text(place.category.localizedName)
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
-
-                Text(place.description)
-                    .font(.body)
-                    .multilineTextAlignment(.leading)
-            }
-            .padding(.horizontal, 16)
-
-            // 🎯 Buttons
-            VStack(spacing: 12) {
-                if let sourceURL = place.sourceURL {
-                    Button(action: { openURL(sourceURL) }) {
+                
+                // Buttons, etc.
+                VStack(spacing: 12) {
+                    if let sourceURL = place.sourceURL {
+                        Button(action: { openURL(sourceURL) }) {
+                            HStack {
+                                Image(systemName: "book.fill")
+                                Text("Read More")
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.blue.gradient)
+                            .foregroundColor(.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 14))
+                        }
+                    }
+                    
+                    Button(action: {
+                        onDirections?()
+                        openInMaps()
+                    }) {
                         HStack {
-                            Image(systemName: "book.fill")
-                            Text("Read More")
+                            Image(systemName: "map.fill")
+                            Text("Get Directions")
                         }
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color.blue.gradient)
+                        .background(Color.green.gradient)
                         .foregroundColor(.white)
                         .clipShape(RoundedRectangle(cornerRadius: 14))
                     }
-                    .padding(.horizontal, 16)
                 }
-
-                Button(action: {
-                    onDirections?()  // ✅ Notify that Apple Maps is opened
-                    openInMaps()
-                }) {
-                    HStack {
-                        Image(systemName: "map.fill")
-                        Text("Get Directions")
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.green.gradient)
-                    .foregroundColor(.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 14))
-                }
-                .padding(.horizontal, 16)
             }
-            .padding(.bottom, 16)
+            .padding(.all, 16)
         }
-        .frame(width: 350)
+        // Make the whole VStack a rounded card
         .background(Color.white)
         .cornerRadius(25)
         .shadow(radius: 12)
         .padding(.horizontal, 12)
+        .frame(width: 350)
     }
-
+    
     private func openURL(_ url: URL) {
         UIApplication.shared.open(url)
     }
-
+    
     private func openInMaps() {
         let coordinate = place.coordinate
         let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate))

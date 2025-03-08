@@ -15,7 +15,6 @@ enum HolyPlaceCategory: String, CaseIterable {
 
 // 🔹 Subcategories for Churches (Relics, Icons, Particles)
 enum ChurchSubcategory: String, CaseIterable {
-    case generalChurch = "General Church"
     case holyRelics = "Holy Relics"
     case crossParticles = "Cross Particles"
     case miracleIcons = "Miracle Icons"
@@ -60,7 +59,7 @@ class PlacesViewModel: ObservableObject {
             coordinate: CLLocationCoordinate2D(latitude: 40.1667, longitude: 24.3269),
             description: "A sacred mountain with 20 monasteries, a center of Orthodox spirituality.",
             imageURL: URL(string: "https://pravoslavie.ru/sas/image/103639/363964.p.jpg?mtime=1625230084")!,
-            sourceURL: URL(string: "https://azbyka.ru/palomnik/")!
+            sourceURL: URL(string: "https://www.europeana.eu/en/exhibitions/the-silk-and-the-blood/mount-athos")!
         ),
         // 2. Monastery of St. Catherine – Egypt, Saint Catherine
         Place(
@@ -71,8 +70,8 @@ class PlacesViewModel: ObservableObject {
             subcategory: nil,
             coordinate: CLLocationCoordinate2D(latitude: 28.5555, longitude: 33.9750),
             description: "One of the world's oldest Christian monasteries, located at the foot of Mount Sinai.",
-            imageURL: URL(string: "https://upload.wikimedia.org/wikipedia/commons/d/d9/St_Catherine%27s_Monastery_Sinai_Egypt.jpg")!,
-            sourceURL: URL(string: "https://azbyka.ru/palomnik/")!
+            imageURL: URL(string: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Saint_Catherine_Sinai.jpg/640px-Saint_Catherine_Sinai.jpg")!,
+            sourceURL: URL(string: "https://www.sinaimonastery.com/index.php/en/")!
         ),
         // 3. Kyiv Pechersk Lavra – Ukraine, Kyiv
         Place(
@@ -83,8 +82,8 @@ class PlacesViewModel: ObservableObject {
             subcategory: nil,
             coordinate: CLLocationCoordinate2D(latitude: 50.4346, longitude: 30.5577),
             description: "A major Orthodox monastery known for its network of caves and relics.",
-            imageURL: URL(string: "https://upload.wikimedia.org/wikipedia/commons/2/2f/Kiev_Pechersk_Lavra_15.JPG")!,
-            sourceURL: URL(string: "https://azbyka.ru/palomnik/")!
+            imageURL: URL(string: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Perchersk_Lavra%2C_Kyiv_Lithograph.jpg/640px-Perchersk_Lavra%2C_Kyiv_Lithograph.jpg")!,
+            sourceURL: URL(string: "https://lavra.ua/en/")!
         ),
         // 4. Trinity Lavra of St. Sergius – Russia, Sergiyev Posad
         Place(
@@ -95,8 +94,8 @@ class PlacesViewModel: ObservableObject {
             subcategory: nil,
             coordinate: CLLocationCoordinate2D(latitude: 56.3151, longitude: 38.1365),
             description: "The most important monastery in Russia, founded by St. Sergius of Radonezh.",
-            imageURL: URL(string: "https://upload.wikimedia.org/wikipedia/commons/3/37/Sergiyev_Posad_Lavra_04-2016_img06_Trinity_Cathedral.jpg")!,
-            sourceURL: URL(string: "https://azbyka.ru/palomnik/")!
+            imageURL: URL(string: "https://www.visitrussia.com/images/gallery/article_photo/607d9a4d58d3c.jpg")!,
+            sourceURL: URL(string: "https://www.visitrussia.com/citiesguide/moscow/places/the_holy_trinity_st_sergius_lavra/")!
         ),
         // 5. Ostrog Monastery – Montenegro, Ostrog
         Place(
@@ -107,8 +106,8 @@ class PlacesViewModel: ObservableObject {
             subcategory: nil,
             coordinate: CLLocationCoordinate2D(latitude: 42.6755, longitude: 19.0294),
             description: "A remarkable monastery built into a vertical cliff, known for miracles.",
-            imageURL: URL(string: "https://upload.wikimedia.org/wikipedia/commons/5/55/Ostrog_monastery.jpg")!,
-            sourceURL: URL(string: "https://azbyka.ru/palomnik/")!
+            imageURL: URL(string: "https://www.venntour.me/uploads/files/oSTROG%20BLOG-4%202.jpg")!,
+            sourceURL: URL(string: "https://www.visit-montenegro.com/monastery-ostrog/stories/")!
         ),
         // 6. Monastery of St. Naum – North Macedonia, Ohrid
         Place(
@@ -119,8 +118,8 @@ class PlacesViewModel: ObservableObject {
             subcategory: nil,
             coordinate: CLLocationCoordinate2D(latitude: 40.9235, longitude: 20.7408),
             description: "A serene monastery on the shores of Lake Ohrid, home to sacred relics.",
-            imageURL: URL(string: "https://upload.wikimedia.org/wikipedia/commons/6/6f/Monastery_Saint_Naum.jpg")!,
-            sourceURL: URL(string: "https://azbyka.ru/palomnik/")!
+            imageURL: URL(string: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Saint_Naum_Monastery_%28%D0%BC%D0%B0%D0%BD%D0%B0%D1%81%D1%82%D0%B8%D1%80_%D0%A1%D0%B2%D0%B5%D1%82%D0%B8_%D0%9D%D0%B0%D1%83%D0%BC_%D0%BA%D0%BE%D0%B4_%D0%9E%D1%85%D1%80%D0%B8%D0%B4%D0%B0%2C_%D0%9C%D0%B0%D0%BA%D0%B5%D0%B4%D0%BE%D0%BD%D0%B8%D1%98%D0%B0%29.jpg/640px-Saint_Naum_Monastery_%28%D0%BC%D0%B0%D0%BD%D0%B0%D1%81%D1%82%D0%B8%D1%80_%D0%A1%D0%B2%D0%B5%D1%82%D0%B8_%D0%9D%D0%B0%D1%83%D0%BC_%D0%BA%D0%BE%D0%B4_%D0%9E%D1%85%D1%80%D0%B8%D0%B4%D0%B0%2C_%D0%9C%D0%B0%D0%BA%D0%B5%D0%B4%D0%BE%D0%BD%D0%B8%D1%98%D0%B0%29.jpg")!,
+            sourceURL: URL(string: "https://en.wikipedia.org/wiki/Monastery_of_Saint_Naum")!
         ),
         // 7. Valaam Monastery – Russia, Sortavala
         Place(
@@ -131,8 +130,8 @@ class PlacesViewModel: ObservableObject {
             subcategory: nil,
             coordinate: CLLocationCoordinate2D(latitude: 61.3747, longitude: 30.9472),
             description: "A historic monastery on an island in Lake Ladoga, known for its spiritual legacy.",
-            imageURL: URL(string: "https://upload.wikimedia.org/wikipedia/commons/8/85/Valaam_transfiguration.jpg")!,
-            sourceURL: URL(string: "https://azbyka.ru/palomnik/")!
+            imageURL: URL(string: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Valaam_Monastery_%282017-07-11%29.jpg/640px-Valaam_Monastery_%282017-07-11%29.jpg")!,
+            sourceURL: URL(string: "https://nordictravels.com/sights/valaam-monastery/")!
         ),
         // 8. Holy Trinity Cathedral – Georgia, Tbilisi
         Place(
