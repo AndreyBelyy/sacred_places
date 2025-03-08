@@ -142,8 +142,8 @@ class PlacesViewModel: ObservableObject {
             subcategory: .holyRelics, // Subcategory is Holy Relics
             coordinate: CLLocationCoordinate2D(latitude: 41.6938, longitude: 44.8014),
             description: "The largest Orthodox church in Georgia and a major pilgrimage site.",
-            imageURL: URL(string: "https://upload.wikimedia.org/wikipedia/commons/5/55/Holy_Trinity_Cathedral_of_Tbilisi%2C_2016.jpg")!,
-            sourceURL: URL(string: "https://azbyka.ru/palomnik/")
+            imageURL: URL(string: "https://upload.wikimedia.org/wikipedia/en/thumb/7/72/Sameba_Cathedral%2C_Holy_Trinity_Cathedral%2C_Dusk%2C_Tbilisi%2C_Georgia.jpg/640px-Sameba_Cathedral%2C_Holy_Trinity_Cathedral%2C_Dusk%2C_Tbilisi%2C_Georgia.jpg")!,
+            sourceURL: URL(string: "https://en.wikipedia.org/wiki/Holy_Trinity_Cathedral_of_Tbilisi")
         ),
         // 9. Saint Nicholas Church – Italy, Bari
         Place(

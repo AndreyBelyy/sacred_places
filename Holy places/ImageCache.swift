@@ -27,17 +27,30 @@ class ImageCache {
 
     func image(for url: URL) -> UIImage? {
         let filePath = cacheDirectory.appendingPathComponent(url.lastPathComponent)
-        if let data = try? Data(contentsOf: filePath) {
-            return UIImage(data: data)
+
+        if fileManager.fileExists(atPath: filePath.path) {
+            if let data = try? Data(contentsOf: filePath), let image = UIImage(data: data) {
+                print("✅ Loaded image from cache: \(url.lastPathComponent)") // Debug Log
+                return image
+            }
         }
+
+        print("❌ Image not found in cache: \(url.lastPathComponent)") // Debug Log
         return nil
     }
 
     func store(image: UIImage, for url: URL) {
         let filePath = cacheDirectory.appendingPathComponent(url.lastPathComponent)
+        
         if let data = image.jpegData(compressionQuality: 0.8) {
-            try? data.write(to: filePath)
+            do {
+                try data.write(to: filePath)
+                print("✅ Image saved to cache: \(filePath.path)") // Debug Log
+            } catch {
+                print("⚠️ Error saving image to cache: \(error.localizedDescription)")
+            }
         }
+
         cleanCacheIfNeeded()
     }
 
